@@ -54,7 +54,7 @@ export default function About() {
         Using this application will make your work easy-peasy! Have a GoodDay!
       </p>
       <a href="/" className="btn btn-primary">
-        Send Mail
+        Get Started!
       </a>
     </div>
   );

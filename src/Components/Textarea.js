@@ -1,12 +1,36 @@
 import React, { useState } from "react";
 
 export default function Textarea(props) {
+  const [dataa, setData] = useState("");
+  const [fileName, setfileName] = useState("");
+  const [listheading, setlistheading] = useState("");
+  const filteredlist = [];
   const SendMail = () => {
     props.showAlert("Mail sucessfully sent!", "success");
   };
 
   const Showvalidemails = () => {
-    props.showAlert("Valid email-id's sucessfully fetched!", "success");
+    document.querySelector("table").innerHTML = "";
+    let array = dataa.split(/\r?\n|\r/).map((e) => {
+      return e.split(",");
+    });
+    let elen = 0;
+    array.forEach((e) => {
+      let m = e.map((e) => {
+        let regx = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,3}$/;
+
+        if (regx.test(e)) {
+          elen++;
+          return `<td>${e}</td>`;
+        }
+      });
+
+      let ce = document.createElement("tr");
+      ce.innerHTML = m;
+      document.querySelector("table").appendChild(ce);
+    });
+    setlistheading(`Valid Mail-Id List-Total result=${elen}:`);
+    props.showAlert("Valid Email-Id's extracted!", "success");
   };
 
   const clear = () => {
@@ -16,19 +40,90 @@ export default function Textarea(props) {
   };
 
   const Showinvalidemails = () => {
-    props.showAlert("Invalid Email-Id's extracted!", "success");
+    document.querySelector("table").innerHTML = "";
+    let array = dataa.split(/\r?\n|\r/).map((e) => {
+      return e.split(",");
+    });
+    let elen = 0;
+    array.forEach((e) => {
+      let m = e.map((e) => {
+        let pattern = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,3}$/;
+        if (pattern.test(e)) {
+        } else {
+          elen++;
+          return `<td>${e}</td>`;
+        }
+      });
+      let ce = document.createElement("tr");
+      ce.innerHTML = m;
+      document.querySelector("table").appendChild(ce);
+    });
+    setlistheading(`InValid Mail-Id List:Total Results=${elen}`);
+    props.showAlert("InValid Email-Id's extracted!", "success");
   };
   const Filter = () => {
-    props.showAlert("Filtered", "success");
+    document.querySelector("table").innerHTML = "";
+    let array = dataa.split(/\r?\n|\r/).map((e) => {
+      return e.split(",");
+    });
+    array.forEach((e) => {
+      let m = e.map((e) => {
+        let regx = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,3}$/;
+        if (regx.test(e)) {
+          filteredlist.push(e);
+          return `<td>${e}</td>`;
+        }
+      });
+
+      let ce = document.createElement("tr");
+      ce.innerHTML = m;
+      document.querySelector("table").appendChild(ce);
+      setlistheading(`Filtered List -Total result=${filteredlist.length}:`);
+      props.showAlert("Filtered!", "success");
+    });
+    // console.log(filteredlist);
   };
+
   const Showallemails = () => {
+    document.querySelector("table").innerHTML = "";
+    // console.log(dataa);
+
+    let array = dataa.split(/\r?\n|\r/).map((e) => {
+      return e.split(",");
+    });
+    let elen = 0;
+    array.forEach((e) => {
+      let m = e.map((e) => {
+        elen++;
+        return `<td>${e}</td>`;
+      });
+      let ce = document.createElement("tr");
+      ce.innerHTML = m;
+      document.querySelector("table").appendChild(ce);
+    });
+    setlistheading(`All Mail-Id List:Total Result=${elen}`);
     props.showAlert("All Email-Id's extracted!", "success");
   };
+
   const Upload = () => {
     let fileselected = document.getElementById("file-select");
-    // console.log(fileselected.value);
+    const input = document.getElementById("file-select");
+    const file = input.value.split("\\");
+    setfileName(file[file.length - 1]);
+    // console.log(fileName);
+
+    const reader = new FileReader();
+    let files = document.getElementById("file-select").files;
+
+    reader.readAsText(files[0]);
+    reader.addEventListener("load", (e) => {
+      var data = e.target.result;
+      setData(data);
+      // console.log(data);
+    });
+
     fileselected.value
-      ? props.showAlert("CSV file sucessfully uploaded!", "success")
+      ? props.showAlert(`${fileName} sucessfully uploaded!`, "success")
       : props.showAlert(
           "File not uploaded.Select the appropriate CSV file!",
           "warning"
@@ -63,6 +158,7 @@ export default function Textarea(props) {
             id="exampleFormControlTextarea1"
             rows="7"
             onChange={handleOnchange}
+            value={text}
             placeholder="Type the message here!"
           ></textarea>
         </div>
@@ -126,10 +222,23 @@ export default function Textarea(props) {
       <div className="container">
         <h4>Your text summary:</h4>
         <p>
-          {text.length} characters and {text.split(" ").length} words
+          <b>{text.length}</b> characters and <b>{text.split(" ").length}</b>{" "}
+          words
         </p>
-        <h4>Preview</h4>
-        <p>{text}</p>
+        <hr />
+        <h4>Preview:</h4>
+        {text ? (
+          <p>{text}</p>
+        ) : (
+          <p>
+            <i>Nothing to preview!</i>
+          </p>
+        )}
+      </div>
+      <hr />
+      <div className="container">
+        <h5 id="heading">{listheading}</h5>
+        <table></table>
       </div>
     </>
   );
