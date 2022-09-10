@@ -1,12 +1,74 @@
 import React, { useState } from "react";
+import EmailService from "../service/email-service";
 
 export default function Textarea(props) {
   const [dataa, setData] = useState("");
   const [fileName, setfileName] = useState("");
   const [listheading, setlistheading] = useState("");
   const filteredlist = [];
+
+  const values = {
+    from_name: "",
+    to_email: "",
+    message: "",
+    subject: "",
+  };
+
+  let array = dataa.split(/\r?\n|\r/).map((e) => {
+    return e.split(",");
+  });
+  array.forEach((e) => {
+    e.map((e) => {
+      let regx = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,3}$/;
+      if (regx.test(e)) {
+        filteredlist.push(e);
+      }
+    });
+  });
+  // console.log(filteredlist.length);
+
+  const Filter = () => {
+    document.querySelector("table").innerHTML = "";
+    let array = dataa.split(/\r?\n|\r/).map((e) => {
+      return e.split(",");
+    });
+    array.forEach((e) => {
+      let m = e.map((e) => {
+        let regx = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,3}$/;
+        if (regx.test(e)) {
+          // filteredlist.push(e);
+          return `<td>${e}</td>`;
+        }
+      });
+
+      let ce = document.createElement("tr");
+      ce.innerHTML = m;
+      document.querySelector("table").appendChild(ce);
+      setlistheading(`Filtered List -Total result=${filteredlist.length}:`);
+      props.showAlert("Filtered!", "success");
+    });
+    // console.log(filteredlist);
+  };
   const SendMail = () => {
-    props.showAlert("Mail sucessfully sent!", "success");
+    let subject = document.querySelector(".subject").value;
+    let body = document.querySelector(".message").value;
+    let from = document.querySelector(".from").value;
+
+    // console.log(body);
+    values.message = body;
+    values.from_name = from;
+    values.subject = subject;
+
+    // Just for testing purpose,I have included only the first mail id in the csv file
+    values.to_email = filteredlist[0];
+    EmailService.sendEmail(values);
+
+    filteredlist.forEach((item) => {
+      values.to_email = item;
+      console.log(values);
+      // EmailService.sendEmail(values);
+      // console.log(item);
+    });
   };
 
   const Showvalidemails = () => {
@@ -61,28 +123,6 @@ export default function Textarea(props) {
     setlistheading(`InValid Mail-Id List:Total Results=${elen}`);
     props.showAlert("InValid Email-Id's extracted!", "success");
   };
-  const Filter = () => {
-    document.querySelector("table").innerHTML = "";
-    let array = dataa.split(/\r?\n|\r/).map((e) => {
-      return e.split(",");
-    });
-    array.forEach((e) => {
-      let m = e.map((e) => {
-        let regx = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-z]{2,3}$/;
-        if (regx.test(e)) {
-          filteredlist.push(e);
-          return `<td>${e}</td>`;
-        }
-      });
-
-      let ce = document.createElement("tr");
-      ce.innerHTML = m;
-      document.querySelector("table").appendChild(ce);
-      setlistheading(`Filtered List -Total result=${filteredlist.length}:`);
-      props.showAlert("Filtered!", "success");
-    });
-    // console.log(filteredlist);
-  };
 
   const Showallemails = () => {
     document.querySelector("table").innerHTML = "";
@@ -132,29 +172,61 @@ export default function Textarea(props) {
 
   const handleOnchange = (event) => {
     settext(event.target.value);
+
+    // console.log("change");
+  };
+  const handleOnchangefrom = (event) => {
+    setfrom(event.target.value);
+
+    // console.log("change");
+  };
+
+  const handleOnchangesub = (event) => {
+    setsub(event.target.value);
     // console.log("change");
   };
   const [text, settext] = useState(" ");
+  const [sub, setsub] = useState("");
+  const [from, setfrom] = useState("");
+  const [to, setto] = useState("");
+
   return (
     <>
       <div className="mb-3 container my-3">
         <div className="mb-3">
           <label htmlFor="exampleFormControlInput1" className="form-label">
+            From email:
+          </label>
+          <textarea
+            spellCheck="false"
+            className="form-control from"
+            id="exampleFormControlTextarea1"
+            rows="1"
+            onChange={handleOnchangefrom}
+            value={from}
+            placeholder="Type the from email here!"
+          ></textarea>
+
+          <label htmlFor="exampleFormControlInput1" className="form-label">
             Subject:
           </label>
-          <input
-            type="text"
-            className="form-control"
-            id="exampleFormControlInput1"
-            placeholder="Type your mail subject here"
-          />
+          <textarea
+            spellCheck="false"
+            className="form-control subject"
+            id="exampleFormControlTextarea1"
+            rows="1"
+            onChange={handleOnchangesub}
+            value={sub}
+            placeholder="Type the subject here!"
+          ></textarea>
         </div>
         <div className="mb-3">
           <label htmlFor="exampleFormControlTextarea1" className="form-label">
             Message:
           </label>
           <textarea
-            className="form-control"
+            spellCheck="false"
+            className="form-control message"
             id="exampleFormControlTextarea1"
             rows="7"
             onChange={handleOnchange}

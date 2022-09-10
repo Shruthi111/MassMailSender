@@ -5,7 +5,6 @@ import Textarea from "./Components/Textarea";
 import Alert from "./Components/Alert";
 import About from "./Components/About";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Allmails from "./Components/Allmails";
 
 function App() {
   const [alert, setAlert] = useState(null);
