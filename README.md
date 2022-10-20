@@ -1,0 +1,39 @@
+#  **Mass-Mail-Dispatcher**
+
+---
+### **About this Application:**
+
+Mass-mail dispatcher is an amazing web-application which allows you to send mail to multiple people at a time.
+
+You can upload a csv file(comma seperated values-.csv files) which has a list of recipients email id's.
+
+---
+
+
+<img width="200"  height="100" src="./mail1.jpg"/><img width="200"  height="100" src="./mail2.webp"><img width="200"  height="100" src="./mail3.png">
+
+---
+
+
+It also categorizes the valid and invalid email-id's.So it will be easier for us to filter the email-id list.Isn't it super cool?
+
+---
+
+### **Tools and Technologies used:**
+
+---
+
+  -React JS
+
+ -Bootstrap
+
+ -EmailJS API
+
+
+
+<img width="150"  height="100" src="./react.png">
+<img width="150"  height="100" src="./emailjs.jpg">
+<img width="150"  height="100" src="./bootstrap.png">
+
+---
+
